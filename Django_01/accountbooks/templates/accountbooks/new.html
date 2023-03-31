@@ -1,0 +1,84 @@
+{% extends 'accountbooks/base.html' %}
+
+{% block style %}
+.form-floating>.form-control,
+.form-floating>.form-control-plaintext {
+  padding: 0rem 0.75rem;
+}
+
+.form-floating>.form-control,
+.form-floating>.form-control-plaintext,
+.form-floating>.form-select {
+  height: calc(3.5rem + 8px);
+  line-height: 2;
+}
+
+.form-floating>label {
+  padding: 1rem 0.75rem;
+}
+{% endblock style %}
+
+{% block body %}
+<div class="container mt-5">
+  <div class="card w-25 m-auto">
+    <form action="{% url 'accountbooks:create' %}" method="POST" class="needs-validation card-body" novalidate>
+      {% csrf_token %}
+      <div class="form-floating mb-3">
+        <input type="text" class="form-control" id="note" name="note" placeholder="내용" required>
+        <div class="invalid-feedback text-start">내용을 입력하세요</div>
+        <label for="note">내용</label>
+      </div>
+      <div class="form-floating mb-3">
+        <textarea class="form-control" placeholder="메모" id="description" name="description" style="height: 10rem;"></textarea>
+        <label for="description">메모</label>
+      </div>
+      <div class="form-floating mb-3">
+        <select class="form-select" id="category" name="category">
+          <option value="식비">식비</option>
+          <option value="품위유지비">품위유지비</option>
+          <option value="저축">저축</option>
+          <option value="주거비">주거비</option>
+          <option value="교통비">교통비</option>
+          <option value="문화생활비">문화생활비</option>
+        </select>
+        <label for="category">분류</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="number" class="form-control" id="amount" name="amount" value="0" min="0">
+        <label for="amount">사용 금액</label>
+      </div>
+      <div class="form-floating mb-3">
+        <input type="date" class="form-control" id="date" name="date">
+        <label for="date">사용 날짜</label>
+      </div>
+      <div class="d-flex justify-content-between">
+        <a class="btn btn-outline-danger" href="{% url 'accountbooks:index' %}">뒤로가기</a>
+        <input class="btn btn-outline-primary" type="submit" value="추가하기">
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock body %}
+
+{% block script %}
+(() => {
+  'use strict'
+
+  // Fetch all the forms we want to apply custom Bootstrap validation styles to
+  const forms = document.querySelectorAll('.needs-validation')
+
+  // Loop over them and prevent submission
+  Array.from(forms).forEach(form => {
+    form.addEventListener('submit', event => {
+      if (!form.checkValidity()) {
+        event.preventDefault()
+        event.stopPropagation()
+      }
+
+      form.classList.add('was-validated')
+    }, false)
+  })
+})()
+
+document.getElementById("date").value = new Date().toISOString().substring(0, 10)
+{% endblock script %}

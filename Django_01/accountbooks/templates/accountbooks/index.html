@@ -1,0 +1,120 @@
+{% extends 'accountbooks/base.html' %}
+
+{% block style %}
+@font-face {
+  font-family: 'GmarketSans';
+  font-weight: 500;
+  font-style: normal;
+  src: url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansMedium.eot');
+  src: url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansMedium.eot?#iefix') format('embedded-opentype'),
+       url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansMedium.woff2') format('woff2'),
+       url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansMedium.woff') format('woff'),
+       url('https://cdn.jsdelivr.net/gh/webfontworld/gmarket/GmarketSansMedium.ttf') format("truetype");
+  font-display: swap;
+} 
+
+h1 {
+  font-family: 'GmarketSans';
+}
+{% endblock style %}
+
+{% block body %}
+<div class="container mt-5 text-center" style="width: 80%;">
+  <h1 class="mb-5">Account Book</h1>
+  <div class = "d-flex justify-content-end mb-2">
+    <button class="btn btn-outline-dark btn-sm me-2" id="all" value="전체" data-filter="전체">전체</button>
+    <button class="btn btn-outline-dark btn-sm me-2" id="eat" value="식비" data-filter="식비">식비</button>
+    <button class="btn btn-outline-dark btn-sm me-2" id="looks" value="품위유지비" data-filter="품위유지비">품위유지비</button>
+    <button class="btn btn-outline-dark btn-sm me-2" id="deposit" value="저축" data-filter="저축">저축</button>
+    <button class="btn btn-outline-dark btn-sm me-2" id="live" value="주거비" data-filter="주거비">주거비</button>
+    <button class="btn btn-outline-dark btn-sm me-2" id="trans" value="교통비" data-filter="교통비">교통비</button>
+    <button class="btn btn-outline-dark btn-sm me-2" id="culture" value="문화생활비" data-filter="문화생활비">문화생활비</button>
+  </div>
+  <table class="table table-hover m-auto mb-2">
+    <thead>
+      <tr class="table-dark">
+        <th scope="col" onclick="sortData(0)" style="cursor: pointer; ">내용</th>
+        <th scope="col" onclick="sortData(1)" style="cursor: pointer; width: 20%;">분류</th>
+        <th scope="col" onclick="sortData(2)" style="cursor: pointer; width: 20%;">사용 금액</th>
+        <th scope="col" onclick="sortData(3)" style="cursor: pointer; width: 20%;">사용 날짜</th>
+      </tr> 
+    </thead>
+    <tbody>
+      {% for accountbook in accountbooks %}
+        <tr>
+          <th scope="row" class="text-truncate data" onclick="location.href='{% url 'accountbooks:detail' accountbook.pk %}'" style="cursor:pointer;" data-type="{{ accountbook.category }}">{{ accountbook.note }}</th>
+          <td class="data {{ accountbook.category }}" data-type="{{ accountbook.category }}">{{ accountbook.category }}</td>
+          <td class="data" data-type="{{ accountbook.category }}">{{ accountbook.amount|floatformat:"g" }}</td>
+          <td class="data" data-type="{{ accountbook.category }}">{{ accountbook.date|date:"Y.m.d D" }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <div class="text-end">
+    <a class="btn btn-outline-dark" href="{% url 'accountbooks:new' %}">사용내역 추가</a>
+  </div>
+</div>
+{% endblock body %}
+
+{% block script %}
+const btn = document.querySelectorAll(".btn-sm")
+const data = document.querySelectorAll(".data")
+
+btn.forEach(b=>b.addEventListener("click", (e) => {
+  const filter = e.target.dataset.filter;
+
+  if (filter == null) {
+    return;
+  }
+
+  data.forEach((row) => {
+    if (filter === "전체" || filter === row.dataset.type) {
+      row.style.removeProperty('display')
+    } else {
+      row.style.display = "none"
+    }
+  })
+}))
+
+function sortData(n) {
+  let table = document.querySelector(".table")
+  let rows, i, x, y, count = 0
+  let switching = true
+  let Switch = false
+  let direction = "ascending"
+
+  while (switching) {
+    switching = false
+    let rows = table.rows
+
+    for (i = 1; i < (rows.length - 1); i++) {
+      Switch = false
+
+      x = rows[i].querySelectorAll(".data")[n]
+      y = rows[i + 1].querySelectorAll(".data")[n]
+
+      if (direction == "ascending") {
+        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+          Switch = true
+          break
+        }
+      } else if (direction == "descending") {
+        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+          Switch = true
+          break
+        }
+      }
+    }
+    if (Switch) {
+      rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+      switching = true
+      count++;
+    } else {
+      if (count == 0 && direction == "ascending") {
+        direction = "descending"
+        switching = true
+      }
+    }
+  }
+}
+{% endblock script %}
