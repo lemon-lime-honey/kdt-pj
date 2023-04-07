@@ -7,7 +7,6 @@ from django.contrib.auth import logout as auth_logout
 from .forms import CustomUserChangeForm, CustomUserCreationForm
 
 
-# Create your views here.
 def login(request):
     if request.method == 'POST':
         form = AuthenticationForm(request, request.POST)
@@ -46,20 +45,37 @@ def signup(request):
 @login_required
 def delete(request):
    request.user.delete()
-   return redirect('accounts:index')
+   auth_logout(request)
+   return redirect('posts:index')
 
 
 @login_required
 def update(request):
     if request.method == 'POST':
-      form = CustomUserChangeForm(request.user, request.POST)
+      form = CustomUserChangeForm(request.POST, instance=request.user)
       if form.is_valid():
         user = form.save()
         update_session_auth_hash(request, user)
-        return redirect('accounts:index')
+        return redirect('posts:index')
     else:
         form = CustomUserChangeForm(instance=request.user)
     context = {
        'form': form,
     }
     return render(request, 'accounts/update.html', context)
+
+
+@login_required
+def password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return redirect('posts:index')
+    else:
+        form = PasswordChangeForm(request.user)
+    context = {
+        'form': form,
+    }
+    return render(request, 'accounts/password.html', context)

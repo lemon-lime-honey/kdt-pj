@@ -22,6 +22,7 @@
   <h2 class="my-3 text-center">게시글 작성하기</h2>
   <form action="{% url 'posts:create' %}" method='POST'>
     {% csrf_token %}
+    {% include 'error.html' %}
     <div class="form-floating mb-3">
       {{ form.title }}
       <label for="{{ form.title.id_for_label }}">제목</label>

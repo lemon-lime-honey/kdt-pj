@@ -29,12 +29,17 @@
         font-size: 1.5rem;
       }
 
+      .errorlist {
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
       {% block style %}{% endblock style %}
     </style>
   </head>
   <body>
     <div class="d-flex flex-column">
-      <nav class="navbar navbar-expand sticky-top z-index-3 bg-white border-bottom" style="width: 100%;">
+      <nav class="navbar navbar-expand sticky-top z-index-3 bg-white border-bottom" style="width: 100%; background-color: #e3f2fd;">
         <div class="container d-flex justify-content-between">
           <a class="navbar-brand ms-3 fs-1" href="{% url 'posts:index' %}">POST</a>
           <div>
@@ -66,9 +71,9 @@
           <h4>IT 정보 공유</h3>
           <hr class="mt-0">
           {% if request.user.is_authenticated %}
-            <a href="{% url 'posts:create' %}" class="link-danger side">글 작성</a>
+            <a href="{% url 'posts:create' %}" class="link-danger side">게시글 작성</a>
           {% endif %}
-          <a class="side" href="{% url 'posts:index' %}">모든 글</a>
+          <a class="side" href="{% url 'posts:index' %}">전체 글 보기</a>
           <a class="side" href="{% url 'posts:category' '개발' %}">개발</a>
           <a class="side" href="{% url 'posts:category' 'CS' %}">CS</a>
           <a class="side" href="{% url 'posts:category' '신기술' %}">신기술</a>
