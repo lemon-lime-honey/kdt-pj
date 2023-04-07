@@ -50,6 +50,7 @@ class CustomUserCreationForm(UserCreationForm):
             attrs={
                 'type':'date',
                 'class': 'form-control',
+                'placeholder': '생년월일'
             }
         ),
     )
@@ -74,7 +75,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta(UserCreationForm.Meta):
         model = get_user_model()
-        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2',)
+        fields = ('username', 'email', 'first_name', 'last_name', 'password1', 'password2', 'birthday')
 
 
 class CustomUserChangeForm(UserChangeForm):
